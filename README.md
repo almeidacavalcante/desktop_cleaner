@@ -1,6 +1,6 @@
 # Instalation
 
-### Activate your environment
+### Activate your virtual environment [Virtualenv Installation](Virtualenv_Installation.md)
 
 `source env/bin/activate`
 
@@ -20,4 +20,4 @@ Create a new file in the desktop to trigger the script and see the results...
 
 
 
-[Installing virtualenv](Virtualenv_Installation.md)
+
