@@ -7,12 +7,12 @@ import shutil
 from datetime import datetime
 from time import gmtime, strftime
 
-class MyHandler(FileSystemEventHandler):
+class FolderOrganizer(FileSystemEventHandler):
     def on_modified(self, event):
         for filename in os.listdir(folder_to_track):
             i = 1
-            if filename != 'kalle':
-                # try:
+            if filename != 'almeida':
+                try:
                     new_name = filename
                     extension = 'noname'
                     try:
@@ -25,199 +25,212 @@ class MyHandler(FileSystemEventHandler):
                     year = now.strftime("%Y")
                     month = now.strftime("%m")
 
-                    folder_destination_path = extensions_folders[extension]
+                    destination_folder_path = extensions_folders[extension]
                     
                     year_exists = False
                     month_exists = False
+
+                    try:
+                        os.listdir(extensions_folders[extension])
+                    except Exception as ex:
+                        os.makedirs(extensions_folders[extension])
+
                     for folder_name in os.listdir(extensions_folders[extension]):
                         if folder_name == year:
-                            folder_destination_path = extensions_folders[extension] + "/" +year
+                            destination_folder_path = extensions_folders[extension] + "/" +year
                             year_exists = True
-                            for folder_month in os.listdir(folder_destination_path):
+                            for folder_month in os.listdir(destination_folder_path):
                                 if month == folder_month:
-                                    folder_destination_path = extensions_folders[extension] + "/" + year + "/" + month
+                                    destination_folder_path = extensions_folders[extension] + "/" + year + "/" + month
                                     month_exists = True
                     if not year_exists:
                         os.mkdir(extensions_folders[extension] + "/" + year)
-                        folder_destination_path = extensions_folders[extension] + "/" + year
+                        destination_folder_path = extensions_folders[extension] + "/" + year
                     if not month_exists:
-                        os.mkdir(folder_destination_path + "/" + month)
-                        folder_destination_path = folder_destination_path + "/" + month
-
-
-                    file_exists = os.path.isfile(folder_destination_path + "/" + new_name)
+                        os.mkdir(destination_folder_path + "/" + month)
+                        destination_folder_path = destination_folder_path + "/" + month
+ 
+                    file_exists = os.path.isfile(destination_folder_path + "/" + new_name)
                     while file_exists:
                         i += 1
                         new_name = os.path.splitext(folder_to_track + '/' + filename)[0] + str(i) + os.path.splitext(folder_to_track + '/' + filename)[1]
                         new_name = new_name.split("/")[4]
-                        file_exists = os.path.isfile(folder_destination_path + "/" + new_name)
+                        file_exists = os.path.isfile(destination_folder_path + "/" + new_name)
                     src = folder_to_track + "/" + filename
 
-                    new_name = folder_destination_path + "/" + new_name
+                    new_name = destination_folder_path + "/" + new_name
                     os.rename(src, new_name)
-                # except Exception:
-                #     print(filename)
+                except Exception as ex:
+                    print(ex)
 
+
+folder_to_track = '/home/almeida/Desktop'
+destination_folder = '/home/almeida/Desktop/Organized'
 extensions_folders = {
 #No name
-    'noname' : "/Users/kalle/Desktop/kalle/Other/Uncategorized",
+    'noname' : "{}/Other/Uncategorized".format(destination_folder),
 #Audio
-    '.aif' : "/Users/kalle/Desktop/kalle/Media/Audio",
-    '.cda' : "/Users/kalle/Desktop/kalle/Media/Audio",
-    '.mid' : "/Users/kalle/Desktop/kalle/Media/Audio",
-    '.midi' : "/Users/kalle/Desktop/kalle/Media/Audio",
-    '.mp3' : "/Users/kalle/Desktop/kalle/Media/Audio",
-    '.mpa' : "/Users/kalle/Desktop/kalle/Media/Audio",
-    '.ogg' : "/Users/kalle/Desktop/kalle/Media/Audio",
-    '.wav' : "/Users/kalle/Desktop/kalle/Media/Audio",
-    '.wma' : "/Users/kalle/Desktop/kalle/Media/Audio",
-    '.wpl' : "/Users/kalle/Desktop/kalle/Media/Audio",
-    '.m3u' : "/Users/kalle/Desktop/kalle/Media/Audio",
+    '.aif' : "{}/Media/Audio".format(destination_folder),
+    '.cda' : "{}/Media/Audio".format(destination_folder),
+    '.mid' : "{}/Media/Audio".format(destination_folder),
+    '.midi' : "{}/Media/Audio".format(destination_folder),
+    '.mp3' : "{}/Media/Audio".format(destination_folder),
+    '.mpa' : "{}/Media/Audio".format(destination_folder),
+    '.ogg' : "{}/Media/Audio".format(destination_folder),
+    '.wav' : "{}/Media/Audio".format(destination_folder),
+    '.wma' : "{}/Media/Audio".format(destination_folder),
+    '.wpl' : "{}/Media/Audio".format(destination_folder),
+    '.m3u' : "{}/Media/Audio".format(destination_folder),
 #Text
-    '.txt' : "/Users/kalle/Desktop/kalle/Text/TextFiles",
-    '.doc' : "/Users/kalle/Desktop/kalle/Text/Microsoft/Word",
-    '.docx' : "/Users/kalle/Desktop/kalle/Text/Microsoft/Word",
-    '.odt ' : "/Users/kalle/Desktop/kalle/Text/TextFiles",
-    '.pdf': "/Users/kalle/Desktop/kalle/Text/PDF",
-    '.rtf': "/Users/kalle/Desktop/kalle/Text/TextFiles",
-    '.tex': "/Users/kalle/Desktop/kalle/Text/TextFiles",
-    '.wks ': "/Users/kalle/Desktop/kalle/Text/TextFiles",
-    '.wps': "/Users/kalle/Desktop/kalle/Text/TextFiles",
-    '.wpd': "/Users/kalle/Desktop/kalle/Text/TextFiles",
+    '.txt' : "{}/Text/TextFiles".format(destination_folder),
+    '.doc' : "{}/Text/Microsoft/Word".format(destination_folder),
+    '.docx' : "{}/Text/Microsoft/Word".format(destination_folder),
+    '.odt ' : "{}/Text/TextFiles".format(destination_folder),
+    '.pdf': "{}/Text/PDF".format(destination_folder),
+    '.rtf': "{}/Text/TextFiles".format(destination_folder),
+    '.tex': "{}/Text/TextFiles".format(destination_folder),
+    '.wks ': "{}/Text/TextFiles".format(destination_folder),
+    '.wps': "{}/Text/TextFiles".format(destination_folder),
+    '.wpd': "{}/Text/TextFiles".format(destination_folder),
 #Video
-    '.3g2': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.3gp': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.avi': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.flv': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.h264': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.m4v': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.mkv': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.mov': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.mp4': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.mpg': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.mpeg': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.rm': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.swf': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.vob': "/Users/kalle/Desktop/kalle/Media/Video",
-    '.wmv': "/Users/kalle/Desktop/kalle/Media/Video",
+    '.3g2': "{}/Media/Video".format(destination_folder),
+    '.3gp': "{}/Media/Video".format(destination_folder),
+    '.avi': "{}/Media/Video".format(destination_folder),
+    '.flv': "{}/Media/Video".format(destination_folder),
+    '.h264': "{}/Media/Video".format(destination_folder),
+    '.m4v': "{}/Media/Video".format(destination_folder),
+    '.mkv': "{}/Media/Video".format(destination_folder),
+    '.mov': "{}/Media/Video".format(destination_folder),
+    '.mp4': "{}/Media/Video".format(destination_folder),
+    '.mpg': "{}/Media/Video".format(destination_folder),
+    '.mpeg': "{}/Media/Video".format(destination_folder),
+    '.rm': "{}/Media/Video".format(destination_folder),
+    '.swf': "{}/Media/Video".format(destination_folder),
+    '.vob': "{}/Media/Video".format(destination_folder),
+    '.wmv': "{}/Media/Video".format(destination_folder),
 #Images
-    '.ai': "/Users/kalle/Desktop/kalle/Media/Images",
-    '.bmp': "/Users/kalle/Desktop/kalle/Media/Images",
-    '.gif': "/Users/kalle/Desktop/kalle/Media/Images",
-    '.ico': "/Users/kalle/Desktop/kalle/Media/Images",
-    '.jpg': "/Users/kalle/Desktop/kalle/Media/Images",
-    '.jpeg': "/Users/kalle/Desktop/kalle/Media/Images",
-    '.png': "/Users/kalle/Desktop/kalle/Media/Images",
-    '.ps': "/Users/kalle/Desktop/kalle/Media/Images",
-    '.psd': "/Users/kalle/Desktop/kalle/Media/Images",
-    '.svg': "/Users/kalle/Desktop/kalle/Media/Images",
-    '.tif': "/Users/kalle/Desktop/kalle/Media/Images",
-    '.tiff': "/Users/kalle/Desktop/kalle/Media/Images",
-    '.CR2': "/Users/kalle/Desktop/kalle/Media/Images",
+    '.ai': "{}/Media/Images".format(destination_folder),
+    '.bmp': "{}/Media/Images".format(destination_folder),
+    '.gif': "{}/Media/Images".format(destination_folder),
+    '.ico': "{}/Media/Images".format(destination_folder),
+    '.jpg': "{}/Media/Images".format(destination_folder),
+    '.jpeg': "{}/Media/Images".format(destination_folder),
+    '.png': "{}/Media/Images".format(destination_folder),
+    '.ps': "{}/Media/Images".format(destination_folder),
+    '.psd': "{}/Media/Images".format(destination_folder),
+    '.svg': "{}/Media/Images".format(destination_folder),
+    '.tif': "{}/Media/Images".format(destination_folder),
+    '.tiff': "{}/Media/Images".format(destination_folder),
+    '.CR2': "{}/Media/Images".format(destination_folder),
 #Internet
-    '.asp': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.aspx': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.cer': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.cfm': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.cgi': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.pl': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.css': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.htm': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.js': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.jsp': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.part': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.php': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.rss': "/Users/kalle/Desktop/kalle/Other/Internet",
-    '.xhtml': "/Users/kalle/Desktop/kalle/Other/Internet",
+    '.asp': "{}/Other/Internet".format(destination_folder),
+    '.aspx': "{}/Other/Internet".format(destination_folder),
+    '.cer': "{}/Other/Internet".format(destination_folder),
+    '.cfm': "{}/Other/Internet".format(destination_folder),
+    '.cgi': "{}/Other/Internet".format(destination_folder),
+    '.pl': "{}/Other/Internet".format(destination_folder),
+    '.css': "{}/Other/Internet".format(destination_folder),
+    '.less': "{}/Other/Internet".format(destination_folder),
+    '.sass': "{}/Other/Internet".format(destination_folder),
+    '.scss': "{}/Other/Internet".format(destination_folder),
+    '.htm': "{}/Other/Internet".format(destination_folder),
+    '.html': "{}/Other/Internet".format(destination_folder),
+    '.js': "{}/Other/Internet".format(destination_folder),
+    '.ts': "{}/Other/Internet".format(destination_folder),
+    '.jsp': "{}/Other/Internet".format(destination_folder),
+    '.part': "{}/Other/Internet".format(destination_folder),
+    '.php': "{}/Other/Internet".format(destination_folder),
+    '.rss': "{}/Other/Internet".format(destination_folder),
+    '.xhtml': "{}/Other/Internet".format(destination_folder),
 #Compressed
-    '.7z': "/Users/kalle/Desktop/kalle/Other/Compressed",
-    '.arj': "/Users/kalle/Desktop/kalle/Other/Compressed",
-    '.deb': "/Users/kalle/Desktop/kalle/Other/Compressed",
-    '.pkg': "/Users/kalle/Desktop/kalle/Other/Compressed",
-    '.rar': "/Users/kalle/Desktop/kalle/Other/Compressed",
-    '.rpm': "/Users/kalle/Desktop/kalle/Other/Compressed",
-    '.tar.gz': "/Users/kalle/Desktop/kalle/Other/Compressed",
-    '.z': "/Users/kalle/Desktop/kalle/Other/Compressed",
-    '.zip': "/Users/kalle/Desktop/kalle/Other/Compressed",
+    '.7z': "{}/Other/Compressed".format(destination_folder),
+    '.arj': "{}/Other/Compressed".format(destination_folder),
+    '.deb': "{}/Other/Compressed".format(destination_folder),
+    '.pkg': "{}/Other/Compressed".format(destination_folder),
+    '.rar': "{}/Other/Compressed".format(destination_folder),
+    '.rpm': "{}/Other/Compressed".format(destination_folder),
+    '.tar.gz': "{}/Other/Compressed".format(destination_folder),
+    '.z': "{}/Other/Compressed".format(destination_folder),
+    '.zip': "{}/Other/Compressed".format(destination_folder),
 #Disc
-    '.bin': "/Users/kalle/Desktop/kalle/Other/Disc",
-    '.dmg': "/Users/kalle/Desktop/kalle/Other/Disc",
-    '.iso': "/Users/kalle/Desktop/kalle/Other/Disc",
-    '.toast': "/Users/kalle/Desktop/kalle/Other/Disc",
-    '.vcd': "/Users/kalle/Desktop/kalle/Other/Disc",
+    '.bin': "{}/Other/Disc".format(destination_folder),
+    '.dmg': "{}/Other/Disc".format(destination_folder),
+    '.iso': "{}/Other/Disc".format(destination_folder),
+    '.toast': "{}/Other/Disc".format(destination_folder),
+    '.vcd': "{}/Other/Disc".format(destination_folder),
 #Data
-    '.csv': "/Users/kalle/Desktop/kalle/Programming/Database",
-    '.dat': "/Users/kalle/Desktop/kalle/Programming/Database",
-    '.db': "/Users/kalle/Desktop/kalle/Programming/Database",
-    '.dbf': "/Users/kalle/Desktop/kalle/Programming/Database",
-    '.log': "/Users/kalle/Desktop/kalle/Programming/Database",
-    '.mdb': "/Users/kalle/Desktop/kalle/Programming/Database",
-    '.sav': "/Users/kalle/Desktop/kalle/Programming/Database",
-    '.sql': "/Users/kalle/Desktop/kalle/Programming/Database",
-    '.tar': "/Users/kalle/Desktop/kalle/Programming/Database",
-    '.xml': "/Users/kalle/Desktop/kalle/Programming/Database",
-    '.json': "/Users/kalle/Desktop/kalle/Programming/Database",
+    '.csv': "{}/Programming/Database".format(destination_folder),
+    '.dat': "{}/Programming/Database".format(destination_folder),
+    '.db': "{}/Programming/Database".format(destination_folder),
+    '.dbf': "{}/Programming/Database".format(destination_folder),
+    '.log': "{}/Programming/Database".format(destination_folder),
+    '.mdb': "{}/Programming/Database".format(destination_folder),
+    '.sav': "{}/Programming/Database".format(destination_folder),
+    '.sql': "{}/Programming/Database".format(destination_folder),
+    '.tar': "{}/Programming/Database".format(destination_folder),
+    '.xml': "{}/Programming/Database".format(destination_folder),
+    '.json': "{}/Programming/Database".format(destination_folder),
 #Executables
-    '.apk': "/Users/kalle/Desktop/kalle/Other/Executables",
-    '.bat': "/Users/kalle/Desktop/kalle/Other/Executables",
-    '.com': "/Users/kalle/Desktop/kalle/Other/Executables",
-    '.exe': "/Users/kalle/Desktop/kalle/Other/Executables",
-    '.gadget': "/Users/kalle/Desktop/kalle/Other/Executables",
-    '.jar': "/Users/kalle/Desktop/kalle/Other/Executables",
-    '.wsf': "/Users/kalle/Desktop/kalle/Other/Executables",
+    '.apk': "{}/Other/Executables".format(destination_folder),
+    '.bat': "{}/Other/Executables".format(destination_folder),
+    '.com': "{}/Other/Executables".format(destination_folder),
+    '.exe': "{}/Other/Executables".format(destination_folder),
+    '.gadget': "{}/Other/Executables".format(destination_folder),
+    '.jar': "{}/Other/Executables".format(destination_folder),
+    '.wsf': "{}/Other/Executables".format(destination_folder),
 #Fonts
-    '.fnt': "/Users/kalle/Desktop/kalle/Other/Fonts",
-    '.fon': "/Users/kalle/Desktop/kalle/Other/Fonts",
-    '.otf': "/Users/kalle/Desktop/kalle/Other/Fonts",
-    '.ttf': "/Users/kalle/Desktop/kalle/Other/Fonts",
+    '.fnt': "{}/Other/Fonts".format(destination_folder),
+    '.fon': "{}/Other/Fonts".format(destination_folder),
+    '.otf': "{}/Other/Fonts".format(destination_folder),
+    '.ttf': "{}/Other/Fonts".format(destination_folder),
 #Presentations
-    '.key': "/Users/kalle/Desktop/kalle/Text/Presentations",
-    '.odp': "/Users/kalle/Desktop/kalle/Text/Presentations",
-    '.pps': "/Users/kalle/Desktop/kalle/Text/Presentations",
-    '.ppt': "/Users/kalle/Desktop/kalle/Text/Presentations",
-    '.pptx': "/Users/kalle/Desktop/kalle/Text/Presentations",
+    '.key': "{}/Text/Presentations".format(destination_folder),
+    '.odp': "{}/Text/Presentations".format(destination_folder),
+    '.pps': "{}/Text/Presentations".format(destination_folder),
+    '.ppt': "{}/Text/Presentations".format(destination_folder),
+    '.pptx': "{}/Text/Presentations".format(destination_folder),
 #Programming
-    '.c': "/Users/kalle/Desktop/kalle/Programming/C&C++",
-    '.class': "/Users/kalle/Desktop/kalle/Programming/Java",
-    '.dart': "/Users/kalle/Desktop/kalle/Programming/Dart",
-    '.py': "/Users/kalle/Desktop/kalle/Programming/Python",
-    '.sh': "/Users/kalle/Desktop/kalle/Programming/Shell",
-    '.swift': "/Users/kalle/Desktop/kalle/Programming/Swift",
-    '.html': "/Users/kalle/Desktop/kalle/Programming/C&C++",
-    '.h': "/Users/kalle/Desktop/kalle/Programming/C&C++",
+    '.c': "{}/Programming/C&C++".format(destination_folder),
+    '.class': "{}/Programming/Java".format(destination_folder),
+    '.dart': "{}/Programming/Dart".format(destination_folder),
+    '.py': "{}/Programming/Python".format(destination_folder),
+    '.sh': "{}/Programming/Shell".format(destination_folder),
+    '.swift': "{}/Programming/Swift".format(destination_folder),
+    '.h': "{}/Programming/C&C++".format(destination_folder),
 #Spreadsheets
-    '.ods' : "/Users/kalle/Desktop/kalle/Text/Microsoft/Excel",
-    '.xlr' : "/Users/kalle/Desktop/kalle/Text/Microsoft/Excel",
-    '.xls' : "/Users/kalle/Desktop/kalle/Text/Microsoft/Excel",
-    '.xlsx' : "/Users/kalle/Desktop/kalle/Text/Microsoft/Excel",
+    '.ods' : "{}/Text/Microsoft/Excel".format(destination_folder),
+    '.xlr' : "{}/Text/Microsoft/Excel".format(destination_folder),
+    '.xls' : "{}/Text/Microsoft/Excel".format(destination_folder),
+    '.xlsx' : "{}/Text/Microsoft/Excel".format(destination_folder),
 #System
-    '.bak' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.cab' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.cfg' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.cpl' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.cur' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.dll' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.dmp' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.drv' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.icns' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.ico' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.ini' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.lnk' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.msi' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.sys' : "/Users/kalle/Desktop/kalle/Text/Other/System",
-    '.tmp' : "/Users/kalle/Desktop/kalle/Text/Other/System",
+    '.bak' : "{}/Text/Other/System".format(destination_folder),
+    '.cab' : "{}/Text/Other/System".format(destination_folder),
+    '.cfg' : "{}/Text/Other/System".format(destination_folder),
+    '.cpl' : "{}/Text/Other/System".format(destination_folder),
+    '.cur' : "{}/Text/Other/System".format(destination_folder),
+    '.dll' : "{}/Text/Other/System".format(destination_folder),
+    '.dmp' : "{}/Text/Other/System".format(destination_folder),
+    '.drv' : "{}/Text/Other/System".format(destination_folder),
+    '.icns' : "{}/Text/Other/System".format(destination_folder),
+    '.ico' : "{}/Text/Other/System".format(destination_folder),
+    '.ini' : "{}/Text/Other/System".format(destination_folder),
+    '.lnk' : "{}/Text/Other/System".format(destination_folder),
+    '.msi' : "{}/Text/Other/System".format(destination_folder),
+    '.sys' : "{}/Text/Other/System".format(destination_folder),
+    '.tmp' : "{}/Text/Other/System".format(destination_folder),
 }
 
-folder_to_track = '/Users/kalle/Desktop'
-folder_destination = '/Users/kalle/Desktop/kalle'
-event_handler = MyHandler()
+
+event_handler = FolderOrganizer()
 observer = Observer()
 observer.schedule(event_handler, folder_to_track, recursive=True)
 observer.start()
 
 try:
-    while True:           
-        time.sleep(10)
+    while True:         
+        cleaning_time_loop_in_seconds = 25
+        print('cleaning... every {} seconds'.format(cleaning_time_loop_in_seconds))  
+        time.sleep(cleaning_time_loop_in_seconds)
 except KeyboardInterrupt:
     observer.stop()
 observer.join()
